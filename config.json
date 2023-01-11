@@ -1,0 +1,28 @@
+{
+    "id_helper": "1024782126446555136",
+    "id_admin": "1024782210483630091",
+    "id_bot": "1062145411592241252",
+    "id_coursM1": "1045377284279898232",
+    "id_coursM2": "1062523230834933801",
+    "id_blacklisted": "1062397959548969050",
+    "id_alumni": "1062154814009638932",
+    "id_aspirant": "1062156578444279865",
+    "id_professionnel": "1062159252522803251",
+    "id_logchannel": "1024783329641365585",
+    "id_privateCat": "1024786334637895772",
+
+    "prefix_eleve": "🎓┃",
+    "prefix_alumni": "💼┃",
+    "prefix_privateChat": "┃💬᲼",
+
+    "embedColor": "#e2c31b",
+    "pageMaxValue": "10",
+
+    "text_roleSelection": "Attribution des rôles",
+
+	"watching": "\"Investir dans le .bim\"",
+	"botName": "IN2C Bot",
+
+    "graduationOn": true,
+    "maxPasswordAttemps": 5
+}

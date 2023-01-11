@@ -1,0 +1,19 @@
+{
+  "name": "discordbotin2c",
+  "version": "1.1.0",
+  "description": "IN2C Bot",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "Roomenn",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^2.0.19"
+  },
+  "dependencies": {
+    "ascii-table": "^0.0.9",
+    "discord.js": "^14.7.1",
+    "dotenv": "^16.0.1"
+  }
+}
