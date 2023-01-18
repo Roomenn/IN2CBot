@@ -6,6 +6,7 @@
     "id_coursM2": "1062523230834933801",
     "id_blacklisted": "1062397959548969050",
     "id_alumni": "1062154814009638932",
+    "id_teacher": "1062159013392941087",
     "id_aspirant": "1062156578444279865",
     "id_professionnel": "1062159252522803251",
     "id_logchannel": "1024783329641365585",
@@ -23,6 +24,6 @@
 	"watching": "\"Investir dans le .bim\"",
 	"botName": "IN2C Bot",
 
-    "graduationOn": true,
+    "graduationOn": false,
     "maxPasswordAttemps": 5
 }
