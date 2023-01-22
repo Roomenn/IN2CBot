@@ -45,7 +45,7 @@ module.exports = {
 						{
 							label: 'Professionnel',
 							description: 'Échange avec les promotions',
-							value: 'role_add#professionel',
+							value: 'role_add#professionnel',
 							emoji: "🏗️",
 						},
 					]),
