@@ -7,7 +7,7 @@ module.exports = {
 	async execute(interaction) {
 		if (!interaction.isStringSelectMenu()) return;
         
-        const [_, ...params] = interaction.customId.split("#")
+        const [_, ...params] = interaction.values[0].split("#");
         if (params.length == 0) return;
         const target = params[0]
 

@@ -13,8 +13,9 @@ class RoleUtil {
     static async giveRoleId(guild, member, roleId) {
         let role = guild.roles.cache.find(role => role.id === roleId)
 
-        if (!role || roleId == helperId)
+        if (!role || roleId == helperId) {
             return console.log("Role not Found: " + roleId)
+        }
         
         await member.roles.add(role)
     }

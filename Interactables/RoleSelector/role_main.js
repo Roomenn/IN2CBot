@@ -43,7 +43,7 @@ module.exports = {
 							emoji: "👨‍🎓",
 						},
 						{
-							label: 'Professionel',
+							label: 'Professionnel',
 							description: 'Échange avec les promotions',
 							value: 'role_add#professionel',
 							emoji: "🏗️",
