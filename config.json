@@ -7,10 +7,12 @@
     "id_blacklisted": "1062397959548969050",
     "id_alumni": "1062154814009638932",
     "id_teacher": "1062159013392941087",
+    "id_resp_peda": "1150839106935464036",
     "id_aspirant": "1062156578444279865",
     "id_professionnel": "1062159252522803251",
     "id_logchannel": "1024783329641365585",
     "id_privateCat": "1024786334637895772",
+    "id_ticketCat": "1150772091025625128",
 
     "prefix_eleve": "🎓┃",
     "prefix_alumni": "💼┃",
