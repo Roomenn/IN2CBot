@@ -1,5 +1,5 @@
 const { EmbedBuilder, userMention, channelMention, ChannelType, PermissionsBitField } = require('discord.js');
-const { embedColor, id_resp_peda, id_helper, id_ticketCat } = require('../../config.json');
+const { embedColor, id_resp_peda, id_helper, id_ticketCat, id_ticketRole } = require('../../config.json');
 const RoleUtil = require('../../Utils/RoleUtil.js');
 
 module.exports = {
@@ -15,6 +15,7 @@ module.exports = {
 		const roleList = [];
 		roleList.push(await guild.roles.cache.find(role => role.id === id_resp_peda))
 		roleList.push(await guild.roles.cache.find(role => role.id === id_helper))
+		roleList.push(await guild.roles.cache.find(role => role.id === id_ticketRole))
 		roleList.push(await guild.members.cache.find(m => m.id === member.id))
 
 		guild.channels.create({
