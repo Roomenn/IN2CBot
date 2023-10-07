@@ -1,4 +1,5 @@
 const { Client, GatewayIntentBits, Partials, Collection } = require("discord.js")
+const NotionUtil = require('./Utils/NotionUtil.js')
 require('dotenv').config()
 
 const { Guilds, GuildMembers, GuildMessages } = GatewayIntentBits
@@ -25,5 +26,6 @@ client
 		loadEvents(client)
 		loadCommands(client)
 		loadInteracts(client)
+		NotionUtil.scheduleNotionUpdate(client)
 	})
 	.catch((err) => console.log(err))
