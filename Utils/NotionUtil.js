@@ -199,7 +199,7 @@ class NotionUpdate {
     }
 
     async sortDBList() {
-        dbList.sort(function (a, b) {
+        this.dbList.sort(function (a, b) {
             if (a.title < b.title) {
                 return -1;
             }
