@@ -19,21 +19,19 @@ module.exports = {
 	async execute(interaction) {
 		var reply = ""
 		if (interaction.options.getSubcommand() === 'update_now'){
+			await interaction.deferReply({ ephemeral: true });
+			
 			const channel = interaction.guild.channels.cache.get(id_wikiUpdateChannel)
 			const published = await NotionUtil.queryUpdates(channel)
 
-			if (published != null) {
-				var reply = "Update Done"
-			} else {
-				var reply = "Nothing to Update"
-			}
+			reply = (published) ? "Update Done" : "Nothing to Update"
+			await interaction.editReply({ content: reply, ephemeral: true });
 
 		} else if (interaction.options.getSubcommand() === 'set_last_updated'){
 			ConfigUtil.setLastNotionUpdate()
 			reply = "Date de référence mise à jour"
+			
+			await interaction.reply({ content: reply, ephemeral: true })
 		}
-		
-		await interaction.reply({ content: reply, ephemeral: true })
-		
 	}
 }

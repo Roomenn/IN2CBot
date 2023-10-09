@@ -2,7 +2,7 @@ const { EmbedBuilder } = require('discord.js');
 const { Client } = require("@notionhq/client")
 const schedule = require('node-schedule');
 const ConfigUtil = require('../Utils/ConfigUtil.js');
-var { embedColor, maxPagePerMessage, id_wikiUpdateChannel } = require('../config.json');
+var { embedColor, maxPagePerMessage, maxPagePerDB, id_wikiUpdateChannel } = require('../config.json');
 require('dotenv').config()
 
 class NotionUtil {
@@ -52,22 +52,26 @@ class NotionUtil {
                     }
                 }
             })
-            
+            db.nbPages = response.results.length
+            const pages = response.results.slice(0, maxPagePerDB)
+
             // Create an array to store promises for each PageInfo creation
-            const pageInfoPromises = response.results.map(async (page) => {
+            const pageInfoPromises = pages.map(async (page) => {
+                const name = page.properties.Name != null ? page.properties.Name : page.properties.Nom
                 const pageInfo = new PageInfo(
-                    page.url,
+                    page.public_url,
                     page.last_edited_by.id,
-                    page.properties.Nom.title[0]?.plain_text
+                    name?.title[0]?.plain_text
                 )
-                return pageInfo;
+                return pageInfo
             })
             const pagesInfo = await Promise.all(pageInfoPromises)
-            db.pagesInfo = pagesInfo;
-            return db;
+            db.pagesInfo = pagesInfo
+            return db
         })
         await Promise.all(databaseQueryPromises)
         dbList = await dbList.filter(db => db.pagesInfo.length > 0)
+        return dbList
     }
 
     static generateEmbeds(store){
@@ -76,14 +80,13 @@ class NotionUtil {
         store.activeMessage = []
 
         store.dbList.forEach(db => {
-            pagesLeft -= 1
             const pagesDB = db.pagesInfo.length
             if (pagesDB > maxPagePerMessage) { // Trop grand pour un message
                 if (store.pushMessage()) pagesLeft = maxPagePerMessage
                 store.messages.push([db.createUpdateEmbed(store.userList, maxPagePerMessage)])
 
             } else if (pagesDB > pagesLeft) { // Plus assez de place
-                if (store.pushMessage()) pagesLeft = maxPagePerMessage-1
+                if (store.pushMessage()) pagesLeft = maxPagePerMessage
                 store.activeMessage.push(db.createUpdateEmbed(store.userList, pagesLeft))
                 pagesLeft -= pagesDB
             } else {
@@ -99,12 +102,13 @@ class NotionUtil {
         const store = new NotionUpdate()
 
         store.dbList = await this.getDatabaseList(notion)
-        await this.queryModifiedPages(notion, store.dbList)
+        store.dbList = await this.queryModifiedPages(notion, store.dbList)
+        store.sortDBList()
         
         if (store.dbList.length == 0) return false
         
         ConfigUtil.setLastNotionUpdate()
-        store.userList = await this.getUserList(notion)
+        // store.userList = await this.getUserList(notion)
         this.generateEmbeds(store)
 
         store.publish(channel)
@@ -149,22 +153,25 @@ class DataBase {
     constructor(id, title = 'Sans Titre'){
         this.id = id
         this.title = title
-        this.pagesInfo = []
+        this.pagesInfo
+        this.nbPages
     }
 
     addPageInfo(pageInfo){
         this.pagesInfo.push(pageInfo)
     }
 
-    createUpdateEmbed(userList, maxPages = 20){
+    createUpdateEmbed(userList, maxPages = 16){
         var text = ""
 
-        const pagesList = this.pagesInfo.slice(0, maxPages)        
+        const pagesList = this.pagesInfo.slice(0, maxPages)
+        if (pagesList.length == 0) return
         pagesList.forEach(page => {
-            text += page.getLinkString() + " - " + userList.find((user) => user.id = page.userID).name + "\n"
+            // const user = userList.find((user) => user.id == page.userID)
+            text += page.getLinkString() + "\n"
         })
-        if (this.pagesInfo.length > maxPages) {
-            text += `+ ${this.pagesInfo.length - maxPages} page(s)`
+        if (this.nbPages > maxPagePerDB) {
+            text += `+ ${this.nbPages - this.pagesInfo.length} page(s)`
         }
 
         return new EmbedBuilder()
@@ -191,12 +198,26 @@ class NotionUpdate {
         return false
     }
 
+    async sortDBList() {
+        dbList.sort(function (a, b) {
+            if (a.title < b.title) {
+                return -1;
+            }
+            if (a.title > b.title) {
+                return 1;
+            }
+            return 0;
+        });
+    }
+
     async publish(channel) {
         const header = `## 📖 Update du Wiki (${NotionUpdate.getDateString()})`
 
         channel.send({ content: header, embeds: this.messages[0] })
         this.messages.slice(1).forEach(message => {
-            channel.send({ embeds: message})
+            const embeds = message.filter(embed => embed != undefined)
+            if (embeds.length == 0) return
+            channel.send({ embeds: embeds})
         })
     }
 
