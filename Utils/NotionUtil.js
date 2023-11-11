@@ -2,6 +2,8 @@ const { EmbedBuilder } = require('discord.js');
 const { Client } = require("@notionhq/client")
 const schedule = require('node-schedule');
 const ConfigUtil = require('../Utils/ConfigUtil.js');
+const usertableData = require('../usertable.json');
+
 var { embedColor, maxPagePerMessage, maxPagePerDB, id_wikiUpdateChannel } = require('../config.json');
 require('dotenv').config()
 
@@ -59,7 +61,7 @@ class NotionUtil {
             const pageInfoPromises = pages.map(async (page) => {
                 const name = page.properties.Name != null ? page.properties.Name : page.properties.Nom
                 const pageInfo = new PageInfo(
-                    page.public_url,
+                    page.url,
                     page.last_edited_by.id,
                     name?.title[0]?.plain_text
                 )
@@ -83,14 +85,14 @@ class NotionUtil {
             const pagesDB = db.pagesInfo.length
             if (pagesDB > maxPagePerMessage) { // Trop grand pour un message
                 if (store.pushMessage()) pagesLeft = maxPagePerMessage
-                store.messages.push([db.createUpdateEmbed(store.userList, maxPagePerMessage)])
+                store.messages.push([db.createUpdateEmbed(maxPagePerMessage)])
 
             } else if (pagesDB > pagesLeft) { // Plus assez de place
                 if (store.pushMessage()) pagesLeft = maxPagePerMessage
-                store.activeMessage.push(db.createUpdateEmbed(store.userList, pagesLeft))
+                store.activeMessage.push(db.createUpdateEmbed(pagesLeft))
                 pagesLeft -= pagesDB
             } else {
-                store.activeMessage.push(db.createUpdateEmbed(store.userList))
+                store.activeMessage.push(db.createUpdateEmbed())
                 pagesLeft -= pagesDB
             }
         })
@@ -161,14 +163,15 @@ class DataBase {
         this.pagesInfo.push(pageInfo)
     }
 
-    createUpdateEmbed(userList, maxPages = 16){
+    createUpdateEmbed(maxPages = 16){
         var text = ""
 
         const pagesList = this.pagesInfo.slice(0, maxPages)
         if (pagesList.length == 0) return
         pagesList.forEach(page => {
-            // const user = userList.find((user) => user.id == page.userID)
-            text += page.getLinkString() + "\n"
+            const user = usertableData.usertable.find(entry => entry.userid == page.userID)
+            const author = user ? user.username : page.userID
+            text += page.getLinkString() + " - (" + author + ")\n"
         })
         if (this.nbPages > maxPagePerDB) {
             text += `+ ${this.nbPages - this.pagesInfo.length} page(s)`
