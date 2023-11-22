@@ -60,10 +60,15 @@ class NotionUtil {
             // Create an array to store promises for each PageInfo creation
             const pageInfoPromises = pages.map(async (page) => {
                 const name = page.properties.Name != null ? page.properties.Name : page.properties.Nom
+                var text = name?.title[0]?.plain_text
+                if (text && text?.includes("\\color{")){
+                    text = text.split("\\text{")[1]
+                    text = text.substring(0, text.length -1)
+                }
                 const pageInfo = new PageInfo(
                     page.url,
                     page.last_edited_by.id,
-                    name?.title[0]?.plain_text
+                    text
                 )
                 return pageInfo
             })
